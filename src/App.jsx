@@ -16,11 +16,9 @@ import TaskDetailPage from "./pages/TaskDetailPage";
 import ArchivePage from "./pages/ArchivePage";
 
 function App() {
-  // Global application state
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load saved tasks or simulate an API request
   useEffect(() => {
     const savedTasks = localStorage.getItem("kanbanTasks");
 
@@ -46,10 +44,8 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Automatically save tasks whenever they change
   useLocalStorage("kanbanTasks", tasks, !isLoading);
 
-  // Add a new task
   const addTask = (taskData) => {
     const newTask = {
       id: crypto.randomUUID(),
@@ -61,13 +57,9 @@ function App() {
       createdAt: new Date().toISOString().split("T")[0],
     };
 
-    setTasks((previousTasks) => [
-      ...previousTasks,
-      newTask,
-    ]);
+    setTasks((previousTasks) => [...previousTasks, newTask]);
   };
 
-  // Move a task to another column
   const moveTask = (taskId, newStatus) => {
     setTasks((previousTasks) =>
       previousTasks.map((task) =>
@@ -78,25 +70,20 @@ function App() {
     );
   };
 
-  // Update existing task information
   const updateTask = (taskId, updatedData) => {
     setTasks((previousTasks) =>
       previousTasks.map((task) =>
-        task.id === taskId
-          ? { ...task, ...updatedData }
-          : task
+        task.id === taskId ? { ...task, ...updatedData } : task
       )
     );
   };
 
-  // Delete a task
   const deleteTask = (taskId) => {
     setTasks((previousTasks) =>
       previousTasks.filter((task) => task.id !== taskId)
     );
   };
 
-  // Display loading screen
   if (isLoading) {
     return (
       <div className="loading-screen">
@@ -108,9 +95,8 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/kanban-task-board">
       <Routes>
-        {/* Main Kanban Board */}
         <Route
           path="/"
           element={
@@ -124,7 +110,6 @@ function App() {
           }
         />
 
-        {/* Individual Task Details */}
         <Route
           path="/task/:id"
           element={
@@ -136,7 +121,6 @@ function App() {
           }
         />
 
-        {/* Archived and Completed Tasks */}
         <Route
           path="/archive"
           element={
@@ -147,7 +131,6 @@ function App() {
           }
         />
 
-        {/* Redirect unknown routes */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
